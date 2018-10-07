@@ -1,0 +1,8 @@
+/*
+Similar to dijkstra
+
+With distance and state we push a heuristic
+
+and sort the priority queue with it
+
+*/
