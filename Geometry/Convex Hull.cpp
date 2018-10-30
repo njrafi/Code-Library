@@ -1,112 +1,183 @@
-/// Note tested
 
 
+
+/*
+Convex Hull implemention from Zubayer vai
+
+*/
+
+/// Change to double if needed
 struct point
 {
-    long long x, y; /// x*x or y*y should fit long long because of cross() function
-
-    point() {}
-    point(long long a, long long b)
-    {
-        x = a, y = b;
-    }
-
-    inline bool operator < (const point &p) const
-    {
-        return ((x < p.x) || (x == p.x && y < p.y));
-    }
+	int x, y, id;
 };
 
-
-/// returns Euclidean distance between 2 points
-double dist(point p1, point p2)
+inline double dist(const point &a, const point &b)
 {
-    // hypot(dx, dy) returns sqrt(dx * dx + dy * dy)
-    return hypot(p1.x - p2.x, p1.y - p2.y);
+	return hypot((double)(a.x-b.x), (double)(a.y-b.y));
 }
 
-long long cross(const point &O, const point &A, const point &B)
+namespace ConvexHull
 {
-    return ((A.x - O.x) * (B.y - O.y)) - ((A.y - O.y) * (B.x - O.x));
+        int np,nc;
+        // np = total number of points
+        // nc = convex hull points
+
+const int maxPoint =  100005;
+
+
+
+
+point P[maxPoint], C[maxPoint], P0;
+
+/// Triangle area from 3 points
+inline i64 triArea2(const point &a, const point &b, const point &c)
+{
+	return (a.x*(b.y-c.y) + b.x*(c.y-a.y) + c.x*(a.y-b.y));
 }
 
-
-/// Polygon P convex or not, P is given in clock-wise of anti-clockwise order
-bool isConvex(vector <point> P)
+inline i64 sqDist(const point &a, const point &b)
 {
-    int n = P.size();
-    ///sort(P.begin(), P.end());
-    if (n <= 2)
-        return false; /// Line or point is not convex
-
-    n++, P.push_back(P[0]); /// Last point = first point
-    bool flag = (cross(P[0], P[1], P[2]) > 0);
-    for (int i = 1; (i + 1) < n; i++)
-    {
-        bool cmp = (cross(P[i], P[i + 1], (i + 2) == n ? P[1] : P[i + 2]) > 0);
-        if (cmp ^ flag)
-            return false;
-    }
-
-    return true;
-}
-
-/// Convex hull using the monotone chain algorithm
-vector <point> convex_hull (vector<point> P)
-{
-    int i, t, k = 0, n = P.size();
-    vector<point> H(n << 1);
-    sort(P.begin(), P.end()); /// Can be converted to O(n) using radix sort
-
-    for (i = 0; i < n; i++)
-    {
-        while (k >= 2 && cross(H[k - 2], H[k - 1], P[i]) < 0)
-            k--;
-        H[k++] = P[i];
-    }
-    for (i = n - 2, t = k + 1; i >= 0; i--)
-    {
-        while (k >= t && cross(H[k - 2], H[k - 1], P[i]) < 0)
-            k--;
-        H[k++] = P[i];
-    }
-
-    H.resize(k - 1);
-
-    /// Comment out this if the last point should be same as first point
-    //H.push_back(H[0]);
-
-    return H;
-}
-
-/// returns the perimeter, which is the sum of Euclidian distances
-/// of consecutive line segments (polygon edges)
-double perimeter(const vector<point> &P)
-{
-    double result = 0.0;
-    for (int i = 0; i < (int)P.size()-1; i++) // remember that P[0] = P[n-1]
-        result += dist(P[i], P[i+1]);
-    return result;
+	return ((a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y));
 }
 
 
 
-/// returns the area, which is half the determinant
-double area(vector<point> &P)
+inline bool comp(const point &a, const point &b)
 {
-    double result = 0.0, x1, y1, x2, y2;
-    for (int i = 0; i < (int)P.size()-1; i++)
-    {
-        x1 = P[i].x;
-        x2 = P[i+1].x;
-        y1 = P[i].y;
-        y2 = P[i+1].y;
-        result += (x1 * y2 - x2 * y1);
-    }
-    return abs(result) / 2.0;
+	int d = triArea2(P0, a, b);
+	if(d < 0)
+		return false;
+	if(!d && sqDist(P0, a) > sqDist(P0, b))
+		return false;
+	return true;
 }
 
+inline bool normal(const point &a, const point &b)
+{
+	return ((a.x==b.x) ? a.y < b.y : a.x < b.x);
+}
+
+inline bool issame(const point &a, const point &b)
+{
+	return (a.x == b.x && a.y == b.y);
+}
+
+inline void makeUnique(int &np)
+{
+	sort(P, P+np, normal);
+	np = unique(P, P+np, issame) - P;
+}
+
+void convexHull(int &np, int &nc)
+{
+	int i, j, pos = 0;
+	for(i = 1; i < np; i++)
+		if(P[i].y<P[pos].y || (P[i].y==P[pos].y && P[i].x<P[pos].x))
+			pos = i;
+	swap(P[0], P[pos]);
+	P0 = P[0];
+	sort(&P[1], &P[np], comp);
+	for(i = 0; i < 3; i++)
+		C[i] = P[i];
+	for(i = j = 3; i < np; i++)
+	{
+		while(triArea2(C[j-2], C[j-1], P[i]) < 0)
+			j--;
+		C[j++] = P[i];
+	}
+	nc = j;
+}
+
+void compress(int &nc)
+{
+	int i, j, d;
+	C[nc] = C[0];
+	for(i=j=1; i < nc; i++)
+	{
+		d = triArea2(C[j-1], C[i], C[i+1]);
+		if(d || (!d && C[j-1].id == C[i+1].id))
+			C[j++] = C[i];
+	}
+	nc = j;
+}
+
+
+void input()
+{
+        scanf("%d", &np);
+        For(i,np)
+        {
+                sff(P[i].x, P[i].y);
+                P[i].id = i + 1;
+        }
+}
+
+
+vector<point> get_hull()
+{
+        makeUnique(np);
+        vector<point> v;
+
+
+        /// handle properly
+        if(np<3)
+        {
+                For(i,np)
+                        v.pb(P[i]);
+                return v;
+        }
+
+        convexHull(np, nc);
+        compress(nc);
+
+        For(i,nc)
+                v.pb(C[i]);
+
+        return v;
+}
+
+
+
+}
 int main()
 {
+        int t;
+	scanf("%d", &t);
+	while(t--)
+	{
 
+
+		ConvexHull::input();
+		vector<point> v = ConvexHull::get_hull();
+		double perim = 0;
+
+		if(v.sz==1)
+		{
+			printf("0.00\n");
+			printf("%d\n", v[0].id);
+		}
+		else if(v.sz==2)
+		{
+			perim = 2.0 * dist(v[0], v[1]);
+			printf("%.2f\n", perim + eps);
+			printf("%d %d\n", v[0].id, v[1].id);
+		}
+		else
+		{
+                        perim = dist(v.back(),v[0]);
+			For(i,v.sz-1)
+				perim += dist(v[i], v[i+1]);
+			printf("%.2f\n", perim + eps);
+			printf("%d", v[0].id);
+			Fre(i,1,v.sz)
+				printf(" %d", v[i].id);
+			printf("\n");
+		}
+		if(t)
+			printf("\n");
+	}
+	return 0;
 }
+
+
