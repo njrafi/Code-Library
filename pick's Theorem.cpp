@@ -1,6 +1,7 @@
 A lattice point in the plane is any point that has integer coordinates.
 
-Let P be a polygon in the plane whose vertices have integer coordinates. Then the area of P can be determined just by counting the lattice points on the interior and boundary of the polygon!
+Let P be a polygon in the plane whose vertices have integer coordinates.
+Then the area of P can be determined just by counting the lattice points on the interior and boundary of the polygon!
 
 In fact, the area is given by
 
