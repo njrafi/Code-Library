@@ -33,8 +33,8 @@ i64 po(i64 a,i64 b)
 
 i64 ncr(i64 n,i64 r)
 {
-    if(r>n)
-            return 0;
+	if(r>n)
+		return 0;
 	if(n==r || !r)
 		return 1;
 	if(r==1)
