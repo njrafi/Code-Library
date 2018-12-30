@@ -1,3 +1,4 @@
+
 #define mxn 30005
 
 int tree[4 * mxn];
