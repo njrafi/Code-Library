@@ -46,67 +46,11 @@ using namespace std;
 
 //int togglebit(int mask,int bit){return mask ^ (1<<bit);}
 
-
-int cnt[1002];
-
 int main()
-
 {
-        int n,inp;
-        sf(n);
-        vi v;
-
-        while(n--)
-        {
-                sf(inp);
-                if(inp > 0)
-                        cnt[inp]++;
-                else if(!inp)
-                        v.pb(0);
-                else
-                {
-                        inp = abs(-inp);
-                        if( cnt[inp])
-                                cnt[inp]--;
-                        else
-                                v.pb(inp);
-                }
-        }
-
-
-        bool ok = 1;
-        vi ans;
-        int zero = 0;
-        For(i,v.sz)
-                if(!v[i])
-                        zero++;
-                else
-                {
-                        if(zero)
-                        {
-                                zero--;
-                                ans.pb(v[i]);
-                        }
-                        else
-                        {
-                                ok = 0;
-                                break;
-                        }
-                }
-
-        if(!ok)
-                puts("No");
-        else
-        {
-                puts("Yes");
-                For(i,ans.sz)
-                        cout << ans[i] << " ";
-                For(i,zero)
-                        cout << 1 << " ";
-                cout << endl;
-        }
 
 
 
 
+        return 0;
 }
