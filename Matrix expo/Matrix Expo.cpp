@@ -2,6 +2,16 @@
 struct matrix
 {
         i64 mat[10][10],row,col;
+        matrix() {}
+        matrix(int row,int col)
+        {
+                this->row = row;
+                this->col = col;
+                For(i,row)
+                        For(j,col)
+                                mat[i][j] = 0;
+        }
+
 };
 
 matrix identity(matrix a)
@@ -22,11 +32,11 @@ void print(matrix a)
         For(i,a.row)
         {
                 For(j,a.col)
-                        cout << a.mat[i][j]<< " ";
-                cout << endl;
+                        cerr << a.mat[i][j]<< " ";
+                cerr << endl;
         }
 }
-matrix multiply(matrix a , matrix b,i64 m)
+matrix multiply(matrix a , matrix b,i64 m = mod)
 {
         matrix r;
         r.row = a.row;
@@ -45,7 +55,7 @@ matrix multiply(matrix a , matrix b,i64 m)
 
 
 // finding a^p
-matrix power(matrix a,int p,i64 m)
+matrix power(matrix a,i64 p,i64 m = mod)
 {
         if(!p)
                 return identity(a);
@@ -60,8 +70,7 @@ matrix power(matrix a,int p,i64 m)
 
 matrix setvalue()
 {
-        matrix r;
-        r.row = r.col = 2;
+        matrix r = matrix(2,2);
         r.mat[0][0] = r.mat[0][1] = r.mat[1][0] = 1;
         r.mat[1][1]  = 0;
         return r;
