@@ -5,7 +5,7 @@ const double PI = 3.141592653589793238460;
 typedef complex<double> Complex;
 typedef valarray<Complex> CArray;
 
-// Cooley–Tukey FFT (in-place)
+// Cooleyâ€“Tukey FFT (in-place)
 void fft(CArray& x)
 {
         const size_t N = x.size();
@@ -167,5 +167,3 @@ int main()
         }
         return 0;
 }
-
-

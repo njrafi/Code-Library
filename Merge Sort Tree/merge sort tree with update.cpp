@@ -42,9 +42,9 @@ void rem(int n,int st,int en,int idx,int val)
 
         int mid = (st+en)/2 , lc = 2 * n , rc = lc + 1;
         if(idx <= mid)
-                add(lc,st,mid,idx,val);
+                rem(lc,st,mid,idx,val);
         else
-                add(rc,mid+1,en,idx,val);
+                rem(rc,mid+1,en,idx,val);
         treegg[n].erase( treegg[n].lower_bound({val,-inf}) );
         return;
 }
